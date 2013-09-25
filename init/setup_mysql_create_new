@@ -1,0 +1,44 @@
+
+##
+## Create database called "secure_login"
+##
+CREATE DATABASE `secure_login` ;
+
+##
+## Create a user to select/insert/update the table
+##
+CREATE USER 'sec_user'@'localhost' IDENTIFIED BY 'eKcGZr59zAa2BEWU';
+GRANT SELECT, INSERT, UPDATE ON `secure_login`.* TO 'sec_user'@'localhost';
+
+##
+## Create members table with usernames
+##
+CREATE TABLE `users`.`members` (
+  `USER_ID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+  `USERNAME` VARCHAR(30) NOT NULL, 
+  `EMAIL` VARCHAR(50) NOT NULL, 
+  `PASSWORD` CHAR(128) NOT NULL, 
+  'ENABLED' BOOL NOT NULL DEFAULT 1,
+  `SALT` CHAR(128) NOT NULL
+) ENGINE = InnoDB;
+
+##
+## Create a table for User Roles
+##
+CREATE TABLE `user_roles` (
+  `USER_ROLE_ID` INT(10) UNSIGNED NOT NULL,
+  `USER_ID` INT(10) UNSIGNED NOT NULL,
+  `AUTHORITY` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`USER_ROLE_ID`),
+  KEY `FK_user_roles` (`USER_ID`),
+  CONSTRAINT `FK_user_roles` FOREIGN KEY (`USER_ID`) REFERENCES `users` (`USER_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+##
+## Create a table to store login attempts.
+##
+CREATE TABLE `secure_login`.`login_attempts` (
+  `USER_ID` int(10) NOT NULL,
+  `TIME` VARCHAR(30) NOT NULL 
+) ENGINE=InnoDB
+
