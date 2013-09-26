@@ -18,7 +18,7 @@ public class LoginController {
 		String name = (String)user.getUsername();
 
 		model.addAttribute("username", name);
-		model.addAttribute("message", "Spring Security login + database example");
+		model.addAttribute("message", "this is a test");
 		return "hello";
  
 	}
