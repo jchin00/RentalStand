@@ -1,3 +1,2 @@
 RentalStand
 ===========
-test
