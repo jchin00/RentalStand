@@ -2,43 +2,165 @@
 ##
 ## Create database called "secure_login"
 ##
-CREATE DATABASE `secure_login` ;
+CREATE DATABASE `RentalStand`;
 
 ##
 ## Create a user to select/insert/update the table
 ##
-CREATE USER 'sec_user'@'localhost' IDENTIFIED BY 'eKcGZr59zAa2BEWU';
-GRANT SELECT, INSERT, UPDATE ON `secure_login`.* TO 'sec_user'@'localhost';
+CREATE USER 'sec_user'@'localhost' IDENTIFIED BY 'w@1t';
+GRANT SELECT, INSERT, UPDATE ON `RentalStand`.* TO 'sec_user'@'localhost';
 
 ##
-## Create members table with usernames
+## Create the primary users table
 ##
-CREATE TABLE `users`.`members` (
-  `USER_ID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
-  `USERNAME` VARCHAR(30) NOT NULL, 
-  `EMAIL` VARCHAR(50) NOT NULL, 
-  `PASSWORD` CHAR(128) NOT NULL, 
-  'ENABLED' BOOL NOT NULL DEFAULT 1,
-  `SALT` CHAR(128) NOT NULL
-) ENGINE = InnoDB;
+DROP TABLE `users`;
+CREATE TABLE `users` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `username` varchar(30) not null,
+    `email` varchar(45) not null,
+    `users_security_fk` int(10) not null,
+    `created_date` TIMESTAMP not null DEFAULT CURRENT_TIMESTAMP,
+    `last_login` TIMESTAMP,
+    `active` boolean not null default 0;
+    ) ENGINE = InnoDB;
+    
+##
+## Create the user_Security table with passwords
+##
+DROP TABLE `users_security`;
+CREATE TABLE `users_security` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `password` varchar(30) not null,
+    `password_question` varchar(128),
+    `password_answer` varchar(128),
+    `created_date` TIMESTAMP not null DEFAULT CURRENT_TIMESTAMP,
+    `verified` boolean not null default 0
+    ) ENGINE = InnoDB;
 
 ##
-## Create a table for User Roles
+## Create the user_roles table
 ##
-CREATE TABLE `user_roles` (
-  `USER_ROLE_ID` INT(10) UNSIGNED NOT NULL,
-  `USER_ID` INT(10) UNSIGNED NOT NULL,
-  `AUTHORITY` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`USER_ROLE_ID`),
-  KEY `FK_user_roles` (`USER_ID`),
-  CONSTRAINT `FK_user_roles` FOREIGN KEY (`USER_ID`) REFERENCES `users` (`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+DROP TABLE `users_roles`;
+CREATE TABLE `users_roles` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `users_fk` int(10) not null,
+    `authority` varchar(45) not null
+    ) ENGINE = InnoDB;    
 
 ##
-## Create a table to store login attempts.
+## Create the users_address table - join table for users and address
 ##
-CREATE TABLE `secure_login`.`login_attempts` (
-  `USER_ID` int(10) NOT NULL,
-  `TIME` VARCHAR(30) NOT NULL 
-) ENGINE=InnoDB
+DROP TABLE `users_address`;
+CREATE TABLE `user_address` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `users_fk` int(10) not null,
+    `primary` boolean not null default 0
+    ) ENGINE = InnoDB;   
 
+##
+## Create the address table 
+##   
+DROP TABLE `address`;
+CREATE TABLE `address` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `address1` varchar(45) not null,
+    `address2` varchar(45),
+    `city` varchar(45) not null,
+    `state` int(10) not null,
+    `zipcode` int(9) not null
+    ) ENGINE = InnoDB;   
+
+##
+## Create the state table 
+##   
+DROP TABLE `state`;
+CREATE TABLE `state` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `state` varchar(45) not null,
+    `country_fk` int(10) not null
+    ) ENGINE = InnoDB;      
+
+
+##
+## Create the country table 
+##   
+DROP TABLE `country`;
+CREATE TABLE `country` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `country` varchar(45) not null
+    ) ENGINE = InnoDB;     
+    
+    
+##
+## Create the users_phone table 
+##   
+DROP TABLE `users_phone`;
+CREATE TABLE `users_phone` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `phone` int(13) not null,
+    `users_fk` int(10) not null,
+    `phone_type_fk` int(10) not null,
+    `primary` boolean not null default 0
+    ) ENGINE = InnoDB;    
+    
+    
+##
+## Create the phone_type table 
+##   
+DROP TABLE `phone_type`;
+CREATE TABLE `phone_type` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `label` varchar(45) not null
+    ) ENGINE = InnoDB;    
+
+    
+##
+## Create the users_home table 
+##   
+DROP TABLE `users_home`;
+CREATE TABLE `users_home` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `home_fk` int(10) not null,
+    `users_fk` int(10) not null,
+    `home_role_fk` int(10) not null
+    ) ENGINE = InnoDB;    
+    
+    
+##
+## Create the login_attempts table 
+##   
+DROP TABLE `login_attempts`;
+CREATE TABLE `login_attempts` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `time` TIMESTAMP not null DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE = InnoDB;    
+    
+##
+## Create the home_role table 
+##   
+DROP TABLE `home_role`;
+CREATE TABLE `home_role` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `role` varchar(45) not null
+    ) ENGINE = InnoDB;    
+    
+##
+## Create the homes table 
+##   
+DROP TABLE `homes`;
+CREATE TABLE `homes` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `address_fk` int(10) not null,
+    `users_fk` int(10),
+    `address_type_fk` int(10) 
+    ) ENGINE = InnoDB;   
+    
+
+##
+## Create the address_type table 
+##   
+DROP TABLE `address_type`;
+CREATE TABLE `address_type` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    `dwelling` varchar(45) not null
+    ) ENGINE = InnoDB;        
