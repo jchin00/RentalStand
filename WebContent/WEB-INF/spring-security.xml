@@ -17,12 +17,13 @@
 			<jdbc-user-service data-source-ref="dataSource"
 				
 				users-by-username-query="
-					select username,password, enabled 
-					from users where USERNAME=?" 
+					select u.username,u.email,u.enabled,us.password 
+					from users u, user_security us
+					where u.user_security_fk = user_security.id and USERNAME=?" 
 				
 				authorities-by-username-query="
 					select u.username, ur.authority from users u, user_roles ur 
-					where u.user_id = ur.user_id and u.username =?  " 
+					where u.user_id = ur.user_fk and u.username =?  " 
 					
 			/>
 		</authentication-provider>
